@@ -1,7 +1,7 @@
 # Large Rocks Mapping — Swisstopo × EPFL ECEO
 
-This repository provides a tool for detecting large rock formations (≥5×5×5 m) in Switzerland using high-resolution RGB aerial figures/imagery (swissfigures/image) and digital elevation models (swissALTI3D). 
-The scripts in this repository were developed during the PhD of V. Zermatten throught the Bachelor project of  [A. Rufer](https://github.com/alexs-rufer/large-rocks-mapping), and the work of  [D. Gasmi](https://github.com/DoniaGasmii/switzerland_nationwide_rock_detection), and  the final production pipeline by  [E. Thomas](https://github.com/evanjt/large-rocks-mapping), in collaboration with the Federal Office of Topography [swisstopo](https://www.swisstopo.admin.ch/) and the [ECEO Lab](https://www.epfl.ch/labs/eceo/).
+This repository provides a tool for detecting large rock formations (≥5×5×5 m) in Switzerland using high-resolution RGB aerial imagery (swissIMAGE) and digital elevation models (swissALTI3D). 
+The scripts in this repository were developed during the PhD of V. Zermatten through the Bachelor project of  [A. Rufer](https://github.com/alexs-rufer/large-rocks-mapping), and the work of [D. Gasmi](https://github.com/DoniaGasmii/switzerland_nationwide_rock_detection), and  the final production pipeline by  [E. Thomas](https://github.com/evanjt/large-rocks-mapping), in collaboration with the Federal Office of Topography [swisstopo](https://www.swisstopo.admin.ch/) and the [ECEO Lab](https://www.epfl.ch/labs/eceo/).
 
 
 
@@ -12,10 +12,10 @@ The scripts in this repository were developed during the PhD of V. Zermatten thr
 <p align="center">  <img src="figures\pipeline.png" width="90%" /></p>
 
 
-All scripts related to this project are available in the current repository. Input data (swissfigures/image and swissAlti3D) are automatically downloaded with the scripts. 
-Other larger files are available to download from a zenodo repository : 
-- best model [weights [50Mo]](models/best.pt)
-- swisstopo rock [annotations (gpkg) [<1Mo]](swisstop_large_rocks_annotations.gpkg)
+All scripts related to this project are available in the current repository. Input data (swissIMAGE and swissAlti3D) are automatically downloaded with the scripts. 
+Other files are available to download : 
+- best model [weights ](models/best.pt)[50MB]
+- swisstopo rock [annotations (gpkg) ](swisstop_large_rocks_annotations.gpkg)[<1MB]
 - predictions for Switzerland (gpkg)
 - [Report](rock_detection_report.pdf)
 
@@ -102,7 +102,7 @@ The model was trained using **YOLOv8** from the [**Ultralytics**](https://www.ul
 - **Architecture:** YOLOv8m  
 - **Image size:** 640 × 640  
 - **Training framework:** PyTorch via Ultralytics  
-- **Input data:** Swissfigures/image RGB tiles and derived hillshade from SwissSURFACE3D  
+- **Input data:** swissIMAGE RGB tiles and derived hillshade from SwissSURFACE3D  
 - **Annotations:** point annotations converted to YOLO bounding boxes (15m per annotations) 
 - **Batch size:** 16 
 - **Epochs:** 120  
@@ -111,7 +111,7 @@ The model was trained using **YOLOv8** from the [**Ultralytics**](https://www.ul
 
 ### Dataset split
 
-For development, the dataset follows a standard split with 80% for training, 10% for testing and 10% for validation. 900 figures/images without rocks covering urban areas or glaciers were added to the training set to increase the number of negative samples. We use this model outputs to compute  metrics.
+For development, the dataset follows a standard split with 80% for training, 10% for testing and 10% for validation. 900 images without rocks covering urban areas or glaciers were added to the training set to increase the number of negative samples. We use this model outputs to compute  metrics.
 
 The final model is trained on all annotated data  including validation and test set, and the negative samples. 
 
@@ -140,27 +140,27 @@ Training samples with data augmentation
 
 The model was trained in alpine areas and applied to all of Switzerland. A qualitative evaluation is provided for areas without predictions.
 
-- Overall, the model is effective at detecting rocks in a systematic manner.  Overprediction were observed  for rocks smaller than the target size with a large shadow, rocks partially covered with grass, or bedrock that emerge sharply from the ground. 
+- Overall, the model is effective at detecting rocks in a systematic manner.  Overpredictions were observed  for rocks smaller than the target size with a large shadow, rocks partially covered with grass, or bedrock that emerge sharply from the ground. 
 
-- The model is trained to favour recall and misses a minimal number of rocks compared to the annotations provided. In the rare cases were some rocks were missed, the analysis reveals often rocks standing out in the rgb channels (swissfigures/image), but not in the swissALTI3D, thus likely below minimum size.
+- The model is trained to favour recall and misses a minimal number of rocks compared to the annotations provided. In the rare cases were some rocks were missed, the analysis reveals often rocks standing out in the rgb channels (swissIMAGE), but not in the swissALTI3D, thus likely below minimum size.
 
-- Compared to previous version using swissSURFACE3D, the use of DEM (swissALTI3D) removes buildings and vegetation leading to  much fewer overdetectionin general (e.g. in urban areas, over glaciers or in forest).
+- Compared to previous version using swissSURFACE3D, the use of DEM (swissALTI3D) removes buildings and vegetation leading to  much fewer over-detectionin general (e.g. in urban areas, over glaciers or in forest).
 
 ### Illustration
 Red dots are annotations, blue rectangles are predictions.
 
 <p align="left">
-Examples of potential overdetection (rock covered with grass):
+Examples of potential over-detection (rock covered with grass):
 <img src="figures/image-3.png" width="80%">
 <br>
-Examples of overdetection (bedrock)
+Examples of over-detection (bedrock)
 <img src="figures/image-6.png" width="80%"><br>
-Examples of overdetection   (rocks best visible in DEM than RGB):
+Examples of over-detection   (rocks better visible in DEM than RGB):
 <br>
 <img src="figures/image-12.png" width="39.5%">
 <img src="figures/image-13.png" width="40%">
 <br>
-Examples of missed  rocks (best visible in RGB than DEM):
+Examples of missed  rocks (better visible in RGB than DEM):
 <br>
 <img src="figures/image-11.png" width="39.2%">
 <img src="figures/image-10.png" width="42.5%">
@@ -185,9 +185,9 @@ The figure below shows the trade-off between finding more rocks (**recall**) and
 
 ### How to use the confidence threshold :
 
-A high confidence threshold (e.g. 50% confidence) requires  minimal corrections (high accuracy).  
+A high confidence threshold (e.g. 50% confidence) requires  minimal manual corrections (high accuracy).  
 
-Then a lower detections threshold (e.g. 10-30% confidence) enables to obtain more complete predictions,   but requires more manually verification, to remove predictions that do not fulfill the criteria.
+Then a lower detections threshold (e.g. 10-30% confidence) enables to obtain more complete predictions,   but requires more manual verification, to remove predictions that do not fulfill the criteria.
 
 ## Confusion matrix
 
@@ -195,11 +195,11 @@ Then a lower detections threshold (e.g. 10-30% confidence) enables to obtain mor
 <p align="center">  <img src="figures\confusion_matrix.png" width="50%" /></p>
 
 
-The model is evaluated on figures/images not used for training with 327 rocks annotated by swisstopo annotators: 
+The model is evaluated on images not used for training with 327 rocks annotated by swisstopo annotators: 
 
-- Most rock are detected (242/327= ~74% recall). 85 rocks were missed.
+- Most rocks are detected (242/327= ~74% recall). 85 rocks were missed.
 
-- Predictions tend to  over-predicts the rocks, i.e.  background samples are classified as rocks (141). Out of all predicted rocks (383), 242 predictions are correct rocks (242/383 = 63% precision).
+- Predictions tend to  over-predicts rocks, i.e.  background is classified as rocks (141). Out of all predicted rocks (383), 242 predictions are correct rocks (242/383 = 63% precision).
 
 
 **Interpretation**: Predictions are fairly complete, annotators could manually discard some excessive predictions. 
