@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.gitignore
+.gitattributes
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints

@@ -14,9 +14,9 @@ The scripts in this repository were developed during the PhD of V. Zermatten thr
 
 All scripts related to this project are available in the current repository. Input data (swissIMAGE and swissAlti3D) are automatically downloaded with the scripts. 
 Other files are available to download : 
-- best model [weights ](models/best.pt)[50MB]
-- swisstopo rock [annotations (gpkg) ](swisstop_large_rocks_annotations.gpkg)[<1MB]
-- predictions for Switzerland (gpkg)
+-  [best model weights [50MB]](models/best.pt)
+- [swisstopo rock annotations (gpkg) [<1MB]](swisstop_large_rocks_annotations.gpkg)
+- [Rock detections for Switzerland (zip)[30MB]](all_rock_detection.zip) 
 - [Report](rock_detection_report.pdf)
 
 
