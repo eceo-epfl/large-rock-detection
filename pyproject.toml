@@ -1,0 +1,61 @@
+[project]
+name = "rock-detection"
+version = "1.0.4"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "ultralytics==8.4.36",
+    "rasterio>=1.3",
+    "numpy>=1.26",
+    "opencv-python>=4.9",
+    "tqdm>=4.66",
+    "requests>=2.31",
+    "duckdb>=1.1",
+    "typer>=0.12",
+    "geopandas>=0.14",
+]
+
+[project.optional-dependencies]
+cuda = ["torch>=2.5,<2.10", "torchvision>=0.15"]
+rocm = ["torch>=2.5,<2.10", "torchvision>=0.15", "pytorch-triton-rocm>=3.0"]
+dev = ["pytest", "ruff"]
+
+[tool.uv]
+conflicts = [
+    [{ extra = "cuda" }, { extra = "rocm" }],
+]
+
+[[tool.uv.index]]
+name = "pytorch-cuda"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-rocm"
+url = "https://download.pytorch.org/whl/rocm6.3"
+explicit = true
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cuda", extra = "cuda" },
+    { index = "pytorch-rocm", extra = "rocm" },
+]
+torchvision = [
+    { index = "pytorch-cuda", extra = "cuda" },
+    { index = "pytorch-rocm", extra = "rocm" },
+]
+pytorch-triton-rocm = [
+    { index = "pytorch-rocm", extra = "rocm" },
+]
+
+[project.scripts]
+large-rocks-mapping = "nationwide:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["nationwide", "utils"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
